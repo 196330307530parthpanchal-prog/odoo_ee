@@ -1,0 +1,40 @@
+<odoo>
+    <!-- Hide the Job Position field (res.partner.function). The field stays in the view
+         (invisible), so nothing else that relies on it breaks.
+         Selectors use only field names and positions (Odoo forbids translated
+         attributes such as placeholder / title / string in selectors). -->
+
+    <!-- Contact form: main Job Position field, plus the child-contact kanban card and
+         child-contact quick form that show it -->
+    <record id="ramsha_view_partner_form_job_hide" model="ir.ui.view">
+        <field name="name">res.partner.form.job.hide.ramsha</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <!-- main form: the only function field that sits directly in a group -->
+            <xpath expr="//group/field[@name='function']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- child contacts: kanban card line (1st function field inside a div) -->
+            <xpath expr="(//field[@name='function']/parent::div)[1]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <!-- child contacts: quick form (2nd function field inside a div) -->
+            <xpath expr="(//field[@name='function']/parent::div)[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Quick create form -->
+    <record id="ramsha_view_partner_simple_form_job_hide" model="ir.ui.view">
+        <field name="name">res.partner.simple.form.job.hide.ramsha</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_simple_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='function']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+</odoo>
