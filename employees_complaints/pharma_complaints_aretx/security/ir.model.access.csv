@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_hr_complaint_officer,hr.complaint.officer,model_hr_complaint,hr.group_hr_user,1,1,1,1
+access_hr_complaint_type_officer,hr.complaint.type.officer,model_hr_complaint_type,hr.group_hr_user,1,1,1,1
