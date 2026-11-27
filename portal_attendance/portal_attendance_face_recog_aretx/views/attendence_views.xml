@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Overlay holding the camera preview and messages (rendered once per page). -->
+    <template id="frontend_layout_attendance_overlay" inherit_id="portal.frontend_layout"
+              name="Selfie Attendance Overlay">
+        <xpath expr="//div[@id='wrapwrap']" position="inside">
+            <div t-if="not request.env.user._is_public()" class="o_pa_nav_item d-print-none" style="display:none;">
+                <a href="#" role="button" class="o_pa_nav_btn btn btn-sm rounded-pill btn-success text-nowrap">
+                    <i class="o_pa_nav_icon fa fa-sign-in me-1"></i><span class="o_pa_nav_label">Check in</span>
+                </a>
+            </div>
+        </xpath>
+        <xpath expr="//div[@id='wrapwrap']" position="inside">
+            <div t-if="not request.env.user._is_public()" id="pa_overlay" class="d-print-none"
+                 style="display:none; position:fixed; top:0; right:0; bottom:0; left:0; z-index:1080; background:rgba(0,0,0,0.6);">
+                <div class="d-flex align-items-center justify-content-center h-100 p-3">
+                    <div class="card shadow" style="width:100%; max-width:420px;">
+                        <div class="card-body text-center">
+                            <h5 class="card-title mb-3">
+                                <span id="pa_title">Attendance</span>
+                                <small class="text-muted" id="pa_employee_name"></small>
+                            </h5>
+                            <div class="mb-3">
+                                <video id="pa_video" autoplay="autoplay" playsinline="playsinline" muted="muted"
+                                       style="display:none; width:100%; max-width:360px; border-radius:8px; border:4px solid transparent; transform:scaleX(-1);"></video>
+                                <canvas id="pa_canvas" style="display:none;"></canvas>
+                            </div>
+                            <div id="pa_message" class="fw-bold mb-3"></div>
+                            <div class="d-flex justify-content-center gap-2">
+                                <button type="button" id="pa_retry_btn" class="btn btn-primary" style="display:none;">Try Again</button>
+                                <button type="button" id="pa_close_btn" class="btn btn-secondary">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </xpath>
+    </template>
+</odoo>
