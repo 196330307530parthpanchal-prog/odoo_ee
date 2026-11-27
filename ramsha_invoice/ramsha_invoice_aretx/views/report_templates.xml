@@ -1,0 +1,102 @@
+<odoo>
+    <!-- Shared block, repeated per layout because XML can't loop -->
+
+    <template id="ramsha_addr_standard" inherit_id="web.external_layout_standard">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_boxed" inherit_id="web.external_layout_boxed">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_bold" inherit_id="web.external_layout_bold">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_striped" inherit_id="web.external_layout_striped">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_folder" inherit_id="web.external_layout_folder">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_wave" inherit_id="web.external_layout_wave">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+    <template id="ramsha_addr_bubble" inherit_id="web.external_layout_bubble">
+        <xpath expr="//ul[@name='company_address_list']" position="before">
+            <t t-set="ramsha_address" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_header_address()"/>
+            <ul t-if="ramsha_address" class="list-unstyled" name="ramsha_pos_address">
+                <li><strong t-out="company.name"/></li>
+                <li style="white-space: pre-line;" t-out="ramsha_address"/>
+            </ul>
+        </xpath>
+        <xpath expr="//ul[@name='company_address_list']" position="attributes">
+            <attribute name="t-if" add="not ramsha_address" separator=" and "/>
+        </xpath>
+    </template>
+
+        <template id="ramsha_footer_bubble" inherit_id="web.external_layout_bubble">
+        <xpath expr="//div[contains(@t-attf-class, 'o_footer_content')]/div[@t-field='company.report_footer']" position="replace">
+            <t t-set="ramsha_footer" t-value="o and o._name == 'account.move' and o._ramsha_get_pos_footer()"/>
+            <div t-if="ramsha_footer" class="border-top pt-2" style="white-space: pre-line;" t-out="ramsha_footer"/>
+            <div t-else="" class="border-top pt-2" t-field="company.report_footer"/>
+        </xpath>
+    </template>
+</odoo>

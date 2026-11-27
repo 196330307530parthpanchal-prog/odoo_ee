@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- All Gulf (GCC) countries print "TRN" instead of "Tax ID".
+         Odoo's own invoice blocks (e.g. the "Tax ID:" under the customer address) read this
+         label from the country, so setting it here fixes them too. -->
+    <record id="base.ae" model="res.country"><field name="vat_label">TRN</field></record>
+    <record id="base.sa" model="res.country"><field name="vat_label">TRN</field></record>
+    <record id="base.qa" model="res.country"><field name="vat_label">TRN</field></record>
+    <record id="base.kw" model="res.country"><field name="vat_label">TRN</field></record>
+    <record id="base.bh" model="res.country"><field name="vat_label">TRN</field></record>
+    <record id="base.om" model="res.country"><field name="vat_label">TRN</field></record>
+</odoo>

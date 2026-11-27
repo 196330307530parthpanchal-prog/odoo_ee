@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_invoice_document_inherit_freight"
+              inherit_id="account.report_invoice_document">
+
+        <!-- Hide service lines from main invoice table -->
+        <xpath expr="//t[@t-as='line']" position="attributes">
+            <attribute name="t-if">
+                not (line.product_id.type == 'service' and line.product_id.visible_on_pinvoice)
+            </attribute>
+        </xpath>
+
+        <!-- Insert services EXACTLY above Total (same table) -->
+        <xpath expr="//t[@t-call='account.document_tax_totals']" position="before">
+
+            <t t-set="visible_services"
+               t-value="o.invoice_line_ids.filtered(
+                    lambda l: l.product_id.type == 'service'
+                    and l.product_id.visible_on_pinvoice
+               )"/>
+
+            <t t-if="visible_services">
+                <tr t-foreach="visible_services" t-as="service_line">
+                    <!-- Service name (same column as Total label) -->
+                    <td class="text-start">
+                        <span t-field="service_line.product_id.name"/>
+                    </td>
+
+                    <!-- Service amount (same column as Total amount) -->
+                    <td class="text-end">
+                        <span t-field="service_line.price_subtotal"
+                              t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                    </td>
+                </tr>
+            </t>
+
+        </xpath>
+
+    </template>
+
+</odoo>

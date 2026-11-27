@@ -1,0 +1,442 @@
+<odoo>
+    <!-- ============================================================
+         CHANGE (default layout / bubble layout): the invoice now uses Odoo's own BUBBLE layout (company logo, name,
+         address and footer exactly as set in Odoo). The Ramsha layout below and the layout switch
+         are OLD CODE, kept but commented out. The extra fields (new columns, customer / company
+         details, signatures, barcode, print date) now live in the invoice body template further down.
+         ============================================================ -->
+
+    
+    <!--> ============================================================
+         Layout used only for customer invoices / credit notes.
+         Letterhead (label, address, mobile, email) is centered and
+         the print date/time sits at the top-left.
+         ============================================================ -->
+    <!-- <template id="ramsha_invoice_layout">
+        <t t-if="not o" t-set="o" t-value="doc"/>
+        <t t-if="not company">
+            <t t-if="company_id">
+                <t t-set="company" t-value="company_id"/>
+            </t>
+            <t t-elif="o and 'company_id' in o and o.company_id.sudo()">
+                <t t-set="company" t-value="o.company_id.sudo()"/>
+            </t>
+            <t t-else="">
+                <t t-set="company" t-value="res_company"/>
+            </t>
+        </t> -->
+
+
+
+        <!-- <div t-attf-class="header o_company_#{company.id}_layout" style="position: relative;">
+            <div class="ramsha_printdate" style="position: absolute; top: 0; left: 0; font-size: 11px;"
+                 t-out="o._ramsha_print_datetime()"/>
+            <div class="text-center ramsha_letterhead">
+                <img t-att-src="o._ramsha_label_uri()" alt="Ramsha"
+                     style="max-height: 40px; max-width: 70%;"/> -->
+
+
+
+                <!-- [!~~ >>> CHANGE (company name): POS shop name (e.g. "Furniture Shop"), fetched from the POS
+                     config like the address. Not a POS invoice => company name. ~~]
+                [!~~ OLD (commented): POS config name -->
+                <!-- <t t-set="ramsha_name" t-value="(o._ramsha_use_pos_address() and o.pos_order_ids[:1].config_id.name) or company.name"/> -->
+                
+
+                <!-- <!~~ new change added: company selected in the top-right company switcher ~~> -->
+                <!-- <t t-set="ramsha_name" t-value="o.env.company.name or company.name"/>
+                <div class="small" t-if="ramsha_name" style="line-height: 1.25;">
+                    <span t-out="ramsha_name"/>
+                </div> -->
+
+                <!-- <t t-set="ramsha_name"
+                   t-value="o.pos_order_ids[:1].config_id.company_id.name or o.company_id.name"/>
+                <div class="small" t-if="ramsha_name" style="line-height: 1.25;">
+                    <span t-out="ramsha_name"/>
+                </div> -->
+
+
+                <!-- [!~~ <<< END CHANGE (company name) ~~] -->
+
+
+                <!-- <div class="small" t-foreach="o._ramsha_header_address_lines()" t-as="addr_line"
+                     style="line-height: 1.25;">
+                    <span t-out="addr_line"/>
+                </div>
+                <div class="small" t-if="company.phone" style="line-height: 1.25;">
+                    <strong>Mobile:</strong> <span t-out="company.phone"/>
+                </div>
+                <div class="small" t-if="company.email or company.website" style="line-height: 1.25;">
+                    <t t-if="company.email">Email: <span t-out="company.email"/></t>
+                    <t t-if="company.email and company.website"> | </t>
+                    <t t-if="company.website">Web: <span t-out="company.website"/></t>
+                </div>
+            </div> -->
+
+
+            <!-- [!~~ wkhtmltopdf repeats the header on every page: hide the letterhead after page 1 ~~] -->
+            
+            
+            <!-- <script>
+                (function () {
+                    var params = {};
+                    document.location.search.substring(1).split('&amp;').forEach(function (kv) {
+                        var parts = kv.split('=');
+                        params[parts[0]] = decodeURIComponent(parts[1] || '');
+                    });
+                    if (params.page &amp;&amp; params.page !== '1') {
+                        Array.prototype.slice.call(document.getElementsByClassName('ramsha_letterhead')).forEach(function (el) {
+                            el.style.visibility = 'hidden';
+                        });
+                    }
+                })();
+            </script>
+        </div> -->
+
+
+
+        <!-- <div t-attf-class="article o_report_layout_standard o_table_standard o_ramsha_invoice o_company_#{company.id}_layout"
+             t-att-data-oe-model="o and o._name"
+             t-att-data-oe-id="o and o.id"
+             t-att-data-oe-lang="o and o.env.context.get('lang')">
+            <style>
+                .o_ramsha_invoice, .o_ramsha_invoice * { font-size: 11px; }
+                .o_ramsha_invoice #ramsha_details, .o_ramsha_invoice #ramsha_details * { font-size: 10.5px; }
+                .o_ramsha_invoice table.o_main_table { border-collapse: collapse; }
+                /* new change added: bold table headings */
+                .o_ramsha_invoice table.o_main_table th,
+                .o_ramsha_invoice table.o_main_table th * { font-weight: bold !important; }
+                .o_ramsha_invoice table.o_main_table th,
+                .o_ramsha_invoice table.o_main_table td { border: 1px solid #c8c8c8 !important; padding: 3px 5px; }
+            </style>
+            <div class="text-center fw-bold py-2 mb-3"
+                 style="border-top: 1px solid #ccc; border-bottom: 1px solid #ccc; font-size: 14px;"
+                 t-out="o._ramsha_document_title()"/>
+            <t t-out="0"/>
+        </div> -->
+
+
+
+        <!-- <div t-attf-class="footer o_company_#{company.id}_layout">
+            <div class="o_footer_content d-flex border-top pt-2"> -->
+                <!-- [!~~ >>> CHANGE (footer): removed the company footer text (phone / email / website line) ~~] -->
+                <!-- <div class="flex-grow-1 text-start me-2"/> -->
+                <!-- [!~~ <<< END CHANGE (footer) ~~] -->
+                <!-- <div class="text-end text-muted">
+                    <div t-if="report_type == 'pdf'" class="text-nowrap">Page <span class="page"/> / <span class="topage"/></div>
+                </div> -->
+            <!-- </div>
+        </div>
+    </template>
+    -->
+
+    
+    <!-- [!~~ >>> CHANGE (layout switch): web.external_layout decides which layout a report uses.
+         For customer invoices / credit notes it now picks the Ramsha layout; every other
+         document keeps the company's normal layout. ~~] -->
+    <!-- <template id="ramsha_external_layout_switch" inherit_id="web.external_layout">
+        <xpath expr="//t[@t-if='company.external_report_layout_id']" position="attributes">
+            <attribute name="t-call">{{ 'ramsha_invoice_aretx.ramsha_invoice_layout' if (o and o._name == 'account.move' and o.move_type in ('out_invoice', 'out_refund')) else company.external_report_layout_id.sudo().key }}</attribute>
+        </xpath>
+        <xpath expr="//t[@t-else='else'][@t-call='web.external_layout_standard']" position="attributes">
+            <attribute name="t-call">{{ 'ramsha_invoice_aretx.ramsha_invoice_layout' if (o and o._name == 'account.move' and o.move_type in ('out_invoice', 'out_refund')) else 'web.external_layout_standard' }}</attribute>
+        </xpath>
+    </template> -->
+    <!-- [!~~ <<< END CHANGE (layout switch) ~~] -->
+   
+
+
+    <!-- >>> CHANGE (bubble layout): customer invoices / credit notes use Odoo's BUBBLE layout
+         (web.external_layout_bubble). web.external_layout decides which layout a report uses;
+         every other document keeps the company's own layout. -->
+    <!-- <template id="ramsha_external_layout_bubble_switch" inherit_id="web.external_layout">
+        <xpath expr="//t[@t-if='company.external_report_layout_id']" position="attributes">
+            <attribute name="t-call">{{ 'web.external_layout_bubble' if (o and o._name == 'account.move' and o.move_type in ('out_invoice', 'out_refund')) else company.external_report_layout_id.sudo().key }}</attribute>
+        </xpath> -->
+        <!-- OLD (commented out): the t-else fallback node does not exist in Odoo 19's web.external_layout,
+             so this xpath raised "cannot be located in parent view" on upgrade.
+        <xpath expr="//t[@t-else='else'][@t-call='web.external_layout_standard']" position="attributes">
+            <attribute name="t-call">{{ 'web.external_layout_bubble' if (o and o._name == 'account.move' and o.move_type in ('out_invoice', 'out_refund')) else 'web.external_layout_standard' }}</attribute>
+        </xpath>
+        -->
+    <!-- </template> -->
+    <!-- <<< END CHANGE (bubble layout) -->
+
+    <!-- OLD (commented out): hid the company GSTIN/VAT line in the Bubble header. Removed because
+         the Bubble layout has no div.header in Odoo 19, so the xpath failed on upgrade.
+        <template id="ramsha_bubble_hide_company_vat" inherit_id="web.external_layout_bubble">
+            <xpath expr="//div[hasclass('header')]" position="inside">
+                <div id="ramsha_hdr_vat" class="d-none" t-att-data-vat="company.vat"/>
+                <script>
+                    (function () {
+                        var probe = document.getElementById('ramsha_hdr_vat');
+                        var vat = probe ? probe.getAttribute('data-vat') : '';
+                        if (!vat) { return; }
+                        var limit = vat.length + 25;
+                        var els = document.querySelectorAll('body *');
+                        for (var i = 0; i &lt; els.length; i++) {
+                            var el = els[i];
+                            if (el === probe || el.tagName === 'SCRIPT' || el.tagName === 'STYLE') { continue; }
+                            var txt = (el.textContent || '').trim();
+                            var parent = el.parentElement;
+                            if (txt.indexOf(vat) !== -1 &amp;&amp; txt.length &lt; limit
+                                    &amp;&amp; parent &amp;&amp; (parent.textContent || '').trim().length &gt;= limit) {
+                                el.style.display = 'none';
+                            }
+                        }
+                    })();
+                </script>
+            </xpath>
+        </template>
+    -->
+    <!-- <<< END CHANGE (hide company VAT in header) -->
+
+    <!-- >>> CHANGE (hide Odoo's default customer address + Tax ID / GSTIN / Place of supply): the customer
+         details are already printed in our own details block.
+         Odoo defines <t t-set="address"> in several branches (shipping address same / different / none),
+         and an xpath only edits the FIRST match, so hiding one node left the others visible.
+         Instead, address is cleared once, right before the page content: after all the branches have set it
+         and before the layout prints it. Nothing is removed from the view, so l10n_in / l10n_gcc_invoice
+         (which edit elements inside the address block) keep working. -->
+    <template id="ramsha_hide_default_invoice_address" inherit_id="account.report_invoice_document">
+        <xpath expr="//div[hasclass('page')]" position="before">
+            <t t-set="address" t-value="False"/>
+        </xpath>
+    </template>
+
+    <!-- >>> CHANGE (remove company "Tax ID: ..." line under the header address) -->
+    <template id="ramsha_bubble_remove_company_taxid" inherit_id="web.external_layout_bubble">
+        <xpath expr="//ul[@name='company_address_list']/li[@t-if='not forced_vat']" position="replace"/>
+        <xpath expr="//ul[@name='company_address_list']/li[@t-else][.//span[@t-esc='forced_vat']]" position="replace"/>
+    </template>
+    <!-- <<< END CHANGE (remove company Tax ID in header) -->
+
+    <!-- OLD (commented out): only hid the first t-set='address' branch, the others still printed
+    <template id="ramsha_hide_default_invoice_address" inherit_id="account.report_invoice_document">
+        <xpath expr="//t[@t-set='address']" position="attributes">
+            <attribute name="t-if">False</attribute>
+        </xpath>
+    </template>
+    -->
+    <!-- <<< END CHANGE (hide default address) -->
+
+    <!-- ============================================================
+         Invoice body
+         ============================================================ -->
+    <template id="ramsha_report_invoice_document" inherit_id="account.report_invoice_document">
+
+        <!-- CHANGE (layout switch): the layout call in this template is NOT edited any more.
+             Modules such as account_edi_ubl_cii, l10n_gcc_invoice, l10n_in make their own copy of
+             this template and look for t-call="web.external_layout"; changing it broke them.
+             The switch to the Ramsha layout now lives in "ramsha_external_layout_switch" above. -->
+
+        <!-- left: customer / right: company TRN, invoice no, date, seller -->
+        <!-- >>> CHANGE (Gulf/other-country fix): hide this row instead of deleting it.
+             l10n_gcc_invoice (Qatar, UAE, Saudi, ...) looks for div[@name='invoice_date'] inside it. -->
+        <xpath expr="//div[@id='informations']" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+
+
+        <!-- <<< END CHANGE (Gulf/other-country fix) -->
+        <!-- OLD (commented out): details block with fixed "TRN" labels
+        <xpath expr="//div[@id='informations']" position="before">
+            <div id="ramsha_details" class="row mb-4">
+                <div class="col-7">
+                    <div><strong>Customer:</strong> <span t-out="o.partner_id.display_name"/></div>
+                    <div><strong>Mobile:</strong> <span t-out="o.partner_id.phone"/></div>
+                    <div><strong>Customer TRN:</strong> <span t-out="o.partner_id.vat"/></div>
+                </div>
+                <div class="col-5 text-end">
+                    <div><strong>TRN:</strong> <span t-out="o.fiscal_position_id.foreign_vat or o.company_id.vat"/></div>
+                    <div><strong>Invoice No:</strong> <span t-out="o.name if o.name != '/' else ''"/></div>
+                    <div><strong>Date:</strong> <span t-out="o._ramsha_invoice_datetime()"/></div>
+                    <div><strong>Seller Name:</strong> <span t-out="o.invoice_user_id.name"/></div>
+                </div>
+            </div>
+        </xpath>
+        -->
+
+
+        <!-- >>> CHANGE (default layout + dynamic tax label) -->
+        <xpath expr="//div[@id='informations']" position="before">
+            <!-- styles that used to live in the Ramsha layout (font size, grid lines, bold headings) -->
+            <style>
+                .page, .page * { font-size: 12px; }
+                .page #ramsha_details, .page #ramsha_details * { font-size: 12px; }
+                .page table.o_main_table { border-collapse: collapse; }
+                .page table.o_main_table th,
+                .page table.o_main_table th * { font-weight: bold !important; }
+                .page table.o_main_table th,
+                .page table.o_main_table td { border: 1px solid #c8c8c8 !important; padding: 3px 5px; }
+            </style>
+            <!-- print date and time (used to sit in the Ramsha layout header) -->
+            <div class="ramsha_printdate text-start mb-2" t-out="o._ramsha_print_datetime()"/>
+            <!-- tax label follows the company's country: TRN (UAE), GSTIN (India), VAT, ... else "Tax ID" -->
+            <t t-set="ramsha_tax_label" t-value="o._ramsha_tax_label()"/>
+            <div id="ramsha_details" class="row mb-4">
+                <div class="col-7">
+                    <div><strong>Customer:</strong> <span t-out="o.partner_id.display_name"/></div>
+                    <div><strong>Mobile:</strong> <span t-out="o.partner_id.phone"/></div>
+                    <div><strong>Customer <t t-out="ramsha_tax_label"/>:</strong> <span t-out="o.partner_id.vat"/></div>
+                </div>
+                <div class="col-5 text-end">
+                    <div><strong><t t-out="ramsha_tax_label"/>:</strong> <span t-out="o.fiscal_position_id.foreign_vat or o.company_id.vat"/></div>
+                    <div><strong>Invoice No:</strong> <span t-out="o.name if o.name != '/' else ''"/></div>
+                    <div><strong>Date:</strong> <span t-out="o._ramsha_invoice_datetime()"/></div>
+                    <div><strong>Seller Name:</strong> <span t-out="o.invoice_user_id.name"/></div>
+                </div>
+            </div>
+        </xpath>
+        <!-- <<< END CHANGE (default layout + dynamic tax label) -->
+
+        <!-- always show the Discount column -->
+        <xpath expr="//t[@t-set='display_discount']" position="attributes">
+            <attribute name="t-value">True</attribute>
+        </xpath>
+
+        <!-- hide the Taxes column -->
+        <xpath expr="//t[@t-set='display_taxes']" position="attributes">
+            <attribute name="t-value">False</attribute>
+        </xpath>
+
+        <!-- OLD (commented out): section / note row span with 7 columns
+        [!~~ section / note rows must span the 4 new columns ~~]
+        <xpath expr="//t[@t-set='line_colspan'][contains(@t-value, 'line.tax_ids')]" position="attributes">
+            <attribute name="t-value">7 + (1 if display_discount else 0) + (1 if display_taxes and not line.tax_ids else 0)</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='line_colspan'][contains(@t-value, 'grouped_line.get')]" position="attributes">
+            <attribute name="t-value">7 + (1 if display_discount else 0) + (1 if display_taxes and not grouped_line.get('taxes') else 0)</attribute>
+        </xpath>
+
+        
+        -->
+        <!-- >>> CHANGE (discount amount column): section / note rows must span one more column -->
+        <xpath expr="//t[@t-set='line_colspan'][contains(@t-value, 'line.tax_ids')]" position="attributes">
+            <attribute name="t-value">8 + (1 if display_discount else 0) + (1 if display_taxes and not line.tax_ids else 0)</attribute>
+        </xpath>
+        <xpath expr="//t[@t-set='line_colspan'][contains(@t-value, 'grouped_line.get')]" position="attributes">
+            <attribute name="t-value">8 + (1 if display_discount else 0) + (1 if display_taxes and not grouped_line.get('taxes') else 0)</attribute>
+        </xpath>
+        <!-- <<< END CHANGE (discount amount column) -->
+
+        <!-- table header -->
+        <xpath expr="//th[@name='th_description']" position="before">
+            <th name="th_sr_no" class="text-center"><span>Sr. No.</span></th>
+            <th name="th_item_code" class="text-start"><span>Item Code</span></th>
+        </xpath>
+        <xpath expr="//th[@name='th_description']" position="after">
+            <th name="th_category" class="text-start"><span>Item Description</span></th>
+            <th name="th_barcode" class="text-start"><span>Item Barcode</span></th>
+            <th name="th_size" class="text-start"><span>Size</span></th>
+        </xpath>
+        <xpath expr="//th[@name='th_discount']/span" position="replace">
+            <span>Discount</span>
+        </xpath>
+        <!-- >>> CHANGE (discount amount column): new header after Discount -->
+        <xpath expr="//th[@name='th_discount']" position="after">
+            <th name="th_discount_amount" t-if="display_discount" class="text-end"><span>Discount Amount</span></th>
+        </xpath>
+        <!-- <<< END CHANGE (discount amount column) -->
+        <xpath expr="//th[@name='th_subtotal']/span" position="replace">
+            <span>Subtotal</span>
+        </xpath>
+
+        <!-- drop the product-name column (header) -->
+        <!-- >>> CHANGE (Gulf/other-country fix): hide, do not delete (l10n_gcc_invoice uses th_description/span) -->
+        <xpath expr="//th[@name='th_description']" position="attributes">
+            <attribute name="class" add="d-none" separator=" "/>
+        </xpath>
+        <!-- <<< END CHANGE (Gulf/other-country fix) -->
+
+        <!-- product rows -->
+        <xpath expr="//td[@name='account_invoice_line_name']" position="before">
+            <td name="td_sr_no" class="text-center">
+                <span t-out="len([l for l in lines_to_report[:line_index + 1] if l.display_type == 'product'])"/>
+            </td>
+            <td name="td_item_code">
+                <!-- OLD (commented): internal reference
+                <span t-out="line.product_id.default_code"/>
+                -->
+                <!-- new change added: product name in Item Code column -->
+                <span t-out="line.product_id.name or line.name"/>
+            </td>
+        </xpath>
+        <xpath expr="//td[@name='account_invoice_line_name']" position="after">
+            <td name="td_category">
+                <span t-out="line.product_id.categ_id.name"/>
+            </td>
+            <td name="td_barcode">
+                <span t-out="line.product_id.barcode"/>
+            </td>
+            <td name="td_size">
+                <span t-out="line._ramsha_get_size()"/>
+            </td>
+        </xpath>
+
+        <!-- >>> CHANGE (discount amount column): "%" sign next to the discount number, and the
+             Discount Amount cell = unit price x quantity x discount % / 100 (100000 at 10% gives 10000) -->
+        <!-- OLD (official cell, replaced): span class text-nowrap with t-field line.discount -->
+        <xpath expr="//td[@name='td_discount']/span" position="replace">
+            <span class="text-nowrap"><span t-field="line.discount"/>%</span>
+        </xpath>
+        <xpath expr="//td[@name='td_discount']" position="after">
+            <td name="td_discount_amount" t-if="display_discount" class="text-end">
+                <span class="text-nowrap" t-out="line.price_unit * line.quantity * line.discount / 100"
+                      t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+            </td>
+        </xpath>
+        <!-- grouped (collapsed) rows: empty cell so the columns stay aligned -->
+        <xpath expr="//td[@name='td_discount_grouped']" position="after">
+            <td name="td_discount_amount_grouped" t-if="display_discount and (hide_details or grouped_line['display_type'] == 'product')" colspan="1"/>
+        </xpath>
+        <!-- <<< END CHANGE (discount amount column) -->
+
+        <!-- drop the product-name column (data) -->
+        <!-- >>> CHANGE (Gulf/other-country fix): hide, do not delete (l10n_gcc_invoice uses td/span) -->
+        <xpath expr="//td[@name='account_invoice_line_name']" position="attributes">
+            <attribute name="style">display: none;</attribute>
+        </xpath>
+        <!-- <<< END CHANGE (Gulf/other-country fix) -->
+
+        <!-- grouped (collapsed) rows: keep columns aligned -->
+        <xpath expr="//td[@name='account_invoice_line_name_grouped_desktop']" position="before">
+            <td t-if="line_colspan == 1" colspan="2"/>
+        </xpath>
+        <xpath expr="//td[@name='account_invoice_line_name_grouped_desktop']" position="after">
+            <td t-if="line_colspan == 1" colspan="3"/>
+        </xpath>
+
+        <!-- new change added: amount in words (all companies except Indian ones, l10n_in already prints its own) -->
+        <xpath expr="//div[@id='total']" position="after">
+            <t t-set="ramsha_words" t-value="o._ramsha_amount_in_words()"/>
+            <div t-if="ramsha_words" id="ramsha_amount_words" class="text-end mb-3">
+                <div>Total amount in words:</div>
+                <div class="text-muted" t-out="ramsha_words"/>
+            </div>
+        </xpath>
+
+        <!-- terms now live on their own last page -->
+        <xpath expr="//div[@name='comment']" position="replace"/>
+
+        <!-- signatures + invoice barcode at the very end -->
+        <xpath expr="//div[hasclass('page')]" position="inside">
+            <div style="margin-top: 90px; page-break-inside: avoid;">
+                <div style="text-align: center; font-size: 0; white-space: nowrap;">
+                    <div style="display: inline-block; width: 48%; text-align: center; font-size: 11px;">
+                        <div style="border-top: 1px dotted #000; width: 70%; margin: 0 auto; padding-top: 4px;">Customer</div>
+                    </div>
+                    <div style="display: inline-block; width: 48%; text-align: center; font-size: 11px;">
+                        <div style="border-top: 1px dotted #000; width: 70%; margin: 0 auto; padding-top: 4px;">Salesman</div>
+                    </div>
+                </div>
+                <div class="text-center" t-if="o.name and o.name != '/'" style="margin-top: 40px;">
+                    <img t-att-src="'/report/barcode/?barcode_type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;humanreadable=1' % ('Code128', o.name, 300, 40)"
+                         alt="Barcode"/>
+                </div>
+            </div>
+            <!-- CHANGE (terms PDF): the Terms & Conditions are no longer in this XML.
+                 They are a separate PDF appended after the last page, see models/ir_actions_report.py -->
+        </xpath>
+    </template> 
+</odoo>
