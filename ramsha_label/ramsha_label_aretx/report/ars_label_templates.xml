@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="ars_label_document">
+        <t t-call="web.html_container">
+            <style>
+                body { margin: 0; padding: 0; }
+                .ars_table { border-collapse: collapse; table-layout: fixed; }
+                .ars_cell { width: 2in; height: 1.96in; padding: 0; vertical-align: top; }
+                .ars_label {
+                    width: 1.9in; height: 1.9in; margin: 0.03in auto 0 auto; overflow: hidden;
+                    text-align: center; color: #000;
+                    font-family: 'DejaVu Sans Mono', 'Liberation Mono', 'Courier New', Courier, monospace; font-weight: bold;
+                }
+                .ars_cat { font-size: 13px; line-height: 15px; text-transform: uppercase; white-space: nowrap; }
+                .ars_bc img { width: 1.8in; height: 0.45in; display: block; margin: 1px auto 0 auto; }
+                .ars_bcnum { font-size: 13px; line-height: 15px; letter-spacing: 1px; }
+                .ars_name { font-size: 15px; line-height: 17px; white-space: nowrap; }
+                .ars_size { font-size: 13px; line-height: 15px; text-transform: uppercase; white-space: nowrap; }
+                .ars_price { font-size: 18px; line-height: 22px; white-space: nowrap; }
+                .ars_small { font-size: 7.5px; line-height: 9px; white-space: nowrap; }
+            </style>
+            <t t-foreach="rows" t-as="row">
+                <div t-att-style="'' if row_last else 'page-break-after: always;'">
+                    <table class="ars_table">
+                        <tr>
+                            <t t-foreach="row" t-as="label">
+                                <td class="ars_cell">
+                                    <div class="ars_label" t-if="label">
+                                        <div class="ars_cat" t-out="label['category']"/>
+                                        <div class="ars_bc" t-if="label['barcode_img']">
+                                            <img t-att-src="label['barcode_img']"/>
+                                        </div>
+                                        <div class="ars_bcnum" t-out="label['barcode']"/>
+                                        <div class="ars_name" t-out="label['name']"/>
+                                        <div class="ars_size" t-if="label['size']">SIZE:<t t-out="label['size']"/></div>
+                                        <div class="ars_price" t-out="label['price']"/>
+                                        <div class="ars_small"> MFG. BY ARS COLORS INDIA </div>
+
+                                        <!-- <div class="ars_small">CUSTOMER CARE - +971 504593815</div> -->
+                                         <div class="ars_small">CUSTOMER CARE - +971 600501502</div>    <!-- new number added -->
+
+                                        <div class="ars_small">EMAIL - contact@ramshahome.ae</div>
+                                    </div>
+                                </td>
+                            </t>
+                        </tr>
+                    </table>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <template id="report_ars_label_2up">
+        <t t-call="ramsha_label_aretx.ars_label_document"/>
+    </template>
+    <template id="report_ars_label_1up">
+        <t t-call="ramsha_label_aretx.ars_label_document"/>
+    </template>
+</odoo>
