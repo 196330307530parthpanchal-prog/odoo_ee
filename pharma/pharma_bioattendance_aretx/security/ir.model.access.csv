@@ -1,0 +1,13 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pharma_biometric_attendance_user,pharma.biometric.attendance.user,model_pharma_biometric_attendance,base.group_user,1,1,1,1
+access_pharma_attendance_report_wizard,access.pharma.attendance.report.wizard,model_pharma_attendance_report_wizard,,1,1,1,1
+access_pharma_attendance_sheet_user,pharma.attendance.sheet user,model_pharma_attendance_sheet,base.group_user,1,1,1,0
+access_pharma_attendance_finalize_wizard_user,pharma.attendance.finalize.wizard user,model_pharma_attendance_finalize_wizard,base.group_user,1,1,1,0
+access_pharma_biometric_mispunch_user,pharma.biometric.mispunch user,model_pharma_biometric_mispunch,base.group_user,1,1,1,0
+access_biometric_device_manager,biometric.device.manager,model_biometric_device,hr.group_hr_manager,1,1,1,1
+access_biometric_device_user,biometric.device.user,model_biometric_device,base.group_user,1,0,0,0
+access_biometric_attendance_log_manager,biometric.attendance.log.manager,model_biometric_attendance_log,hr.group_hr_manager,1,1,1,1
+access_biometric_attendance_log_user,biometric.attendance.log.user,model_biometric_attendance_log,base.group_user,1,0,0,0
+access_import_attendance_wizard,import.attendance.wizard,model_import_attendance_wizard,hr.group_hr_manager,1,1,1,1
+access_biometric_summary_manager,biometric.attendance.summary.manager,model_biometric_attendance_summary,hr.group_hr_manager,1,1,1,1
+access_biometric_summary_user,biometric.attendance.summary.user,model_biometric_attendance_summary,base.group_user,1,0,0,0

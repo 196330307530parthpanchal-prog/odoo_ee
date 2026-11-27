@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="ir_cron_biometric_import_today" model="ir.cron">
+        <field name="name">Biometric: Import Attendance (All Devices)</field>
+        <field name="model_id" ref="model_biometric_device"/>
+        <field name="state">code</field>
+        <field name="code">model.cron_import_today_all_devices()</field>
+        <!--  Managed from Odoo Scheduled Actions  -->
+        <field name="active">True</field>
+    </record>
+</odoo>

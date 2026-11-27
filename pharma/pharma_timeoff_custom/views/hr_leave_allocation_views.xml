@@ -1,0 +1,15 @@
+<odoo>
+<!--  The manager / dashboard allocation forms inherit this one, so the
+         field appears in all of them.  -->
+<record id="hr_leave_allocation_view_form_pharma_coff" model="ir.ui.view">
+<field name="name">hr.leave.allocation.form.pharma.coff</field>
+<field name="model">hr.leave.allocation</field>
+<field name="inherit_id" ref="hr_holidays.hr_leave_allocation_view_form"/>
+<field name="arch" type="xml">
+<xpath expr="//field[@name='holiday_status_id']" position="after">
+<field name="is_coff_allocation" invisible="1"/>
+<field name="coff_work_date" invisible="not is_coff_allocation" required="is_coff_allocation" readonly="state == 'refuse'"/>
+</xpath>
+</field>
+</record>
+</odoo>

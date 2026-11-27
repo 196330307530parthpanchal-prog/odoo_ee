@@ -1,0 +1,60 @@
+<odoo>
+
+    <!-- Breadcrumbs: Home / Employee Self Service / Public Holidays -->
+    <template id="portal_public_holidays_breadcrumbs" inherit_id="portal.portal_breadcrumbs"
+              name="Public Holidays Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name == 'public_holidays'" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'public_holidays'" class="breadcrumb-item active">
+                Public Holidays
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Read-only list of public holidays -->
+    <template id="portal_public_holidays_template" name="Public Holidays">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                    <h2 class="mb-0">Public Holidays</h2>
+                    <div class="btn-group" role="group" aria-label="Year">
+                        <a t-foreach="years" t-as="y"
+                           t-att-href="'/my/public_holidays?year=%s' % y"
+                           t-attf-class="btn btn-outline-primary #{y == year and 'active' or ''}">
+                            <t t-esc="y"/>
+                        </a>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Holiday</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th class="text-end">Days</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="holidays" t-as="holiday"
+                                t-attf-class="#{holiday['is_past'] and 'text-muted' or ''}">
+                                <td><strong t-esc="holiday['name']"/></td>
+                                <td><t t-esc="holiday['start'].strftime('%a, %d %b %Y')"/></td>
+                                <td><t t-esc="holiday['end'].strftime('%a, %d %b %Y')"/></td>
+                                <td class="text-end"><t t-esc="holiday['days']"/></td>
+                            </tr>
+                            <tr t-if="not holidays">
+                                <td colspan="4" class="text-center text-muted">
+                                    No public holidays are defined for <t t-esc="year"/>.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

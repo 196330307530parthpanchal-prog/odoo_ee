@@ -1,0 +1,277 @@
+<odoo>
+
+    <!-- Breadcrumbs: Home / Employee Self Service / View Private Details [/ Request Update] -->
+    <template id="portal_private_details_breadcrumbs" inherit_id="portal.portal_breadcrumbs"
+              name="Private Details Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name in ('private_details', 'private_details_edit')" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'private_details'" class="breadcrumb-item active">
+                View Private Details
+            </li>
+            <li t-if="page_name == 'private_details_edit'" class="breadcrumb-item">
+                <a href="/my/private_details">View Private Details</a>
+            </li>
+            <li t-if="page_name == 'private_details_edit'" class="breadcrumb-item active">
+                Request Update
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Current details + approval status + history -->
+    <template id="portal_private_details_template" name="View Private Details">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+                    <h2 class="mb-0">Private Details</h2>
+                    <a t-if="employee and not pending" href="/my/private_details/edit" class="btn btn-primary">
+                        Request Update
+                    </a>
+                    <button t-if="pending" type="button" class="btn btn-primary" disabled="disabled"
+                            title="Your previous request is still waiting for HR approval">
+                        Request Update
+                    </button>
+                </div>
+
+                <div t-if="not employee" class="alert alert-warning" role="alert">
+                    Your account is not linked to an employee record.
+                </div>
+
+                <div t-if="submitted and pending" class="alert alert-success" role="alert">
+                    Your update request has been sent to HR for approval.
+                </div>
+                <div t-if="pending" class="alert alert-warning" role="alert">
+                    <strong>Pending approval:</strong> your update request sent on
+                    <span t-field="pending.requested_on" t-options="{'widget': 'date'}"/>
+                    is waiting for HR. The details below change only after HR approves it.
+                </div>
+                <t t-if="not pending and last_decided">
+                    <div t-if="last_decided.state == 'rejected'" class="alert alert-danger" role="alert">
+                        <strong>Your last update request was rejected.</strong>
+                        <span t-if="last_decided.reject_reason"> Reason: <t t-esc="last_decided.reject_reason"/></span>
+                    </div>
+                    <div t-if="last_decided.state == 'approved'" class="alert alert-success" role="alert">
+                        <strong>Your last update request was approved</strong> on
+                        <span t-field="last_decided.decided_on" t-options="{'widget': 'date'}"/>.
+                    </div>
+                </t>
+
+                <!-- Requested changes still waiting -->
+                <div t-if="pending" class="card mb-4">
+                    <div class="card-header"><strong>Requested changes (not yet applied)</strong></div>
+                    <div class="table-responsive">
+                        <table class="table table-sm mb-0">
+                            <thead>
+                                <tr><th>Field</th><th>Current</th><th>Requested</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="pending.get_change_lines()" t-as="line">
+                                    <td><t t-esc="line[0]"/></td>
+                                    <td><t t-esc="line[1] or '-'"/></td>
+                                    <td><strong t-esc="line[2] or '-'"/></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Current details -->
+                <div class="row g-3 mb-4">
+                    <div t-foreach="sections" t-as="section" class="col-lg-4">
+                        <div class="card h-100">
+                            <div class="card-header"><strong t-esc="section[0]"/></div>
+                            <div class="card-body">
+                                <dl class="mb-0">
+                                    <t t-foreach="section[1]" t-as="item">
+                                        <dt class="text-muted small fw-normal"><t t-esc="item[0]"/></dt>
+                                        <dd><t t-esc="item[1] or '-'"/></dd>
+                                    </t>
+                                </dl>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- History -->
+                <h4 class="mb-3">My Update Requests</h4>
+                <div class="table-responsive mb-4">
+                    <table class="table table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Requested On</th>
+                                <th>Changes</th>
+                                <th>Status</th>
+                                <th>Decided On</th>
+                                <th>HR Remarks</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="requests" t-as="req">
+                                <td><span t-field="req.requested_on" t-options="{'widget': 'date'}"/></td>
+                                <td>
+                                    <div t-foreach="req.get_change_lines()" t-as="line" class="small">
+                                        <strong><t t-esc="line[0]"/>:</strong>
+                                        <t t-esc="line[1] or '-'"/> &#8594; <t t-esc="line[2] or '-'"/>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span t-if="req.state == 'pending'" class="badge text-bg-warning">Pending Approval</span>
+                                    <span t-elif="req.state == 'approved'" class="badge text-bg-success">Approved</span>
+                                    <span t-elif="req.state == 'rejected'" class="badge text-bg-danger">Rejected</span>
+                                </td>
+                                <td><span t-if="req.decided_on" t-field="req.decided_on" t-options="{'widget': 'date'}"/></td>
+                                <td><t t-esc="req.reject_reason"/></td>
+                            </tr>
+                            <tr t-if="not requests">
+                                <td colspan="5" class="text-center text-muted">You have not requested any update yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <!-- Edit form (sends a request, does not change the employee) -->
+    <template id="portal_private_details_form" name="Request Private Details Update">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <h2>Request Private Details Update</h2>
+                <p class="text-muted">
+                    Your changes are sent to HR. Your details are updated only after HR approves the request.
+                </p>
+                <div t-if="error" class="alert alert-danger" role="alert"><t t-esc="error"/></div>
+
+                <form action="/my/private_details/submit" method="post" id="private_details_form">
+                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+
+                    <h5 class="mt-4">Private Contact</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="private_street">Street</label>
+                            <input type="text" class="form-control" id="private_street" name="private_street" t-att-value="values.get('private_street')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="private_street2">Street 2</label>
+                            <input type="text" class="form-control" id="private_street2" name="private_street2" t-att-value="values.get('private_street2')"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="private_city">City</label>
+                            <input type="text" class="form-control" id="private_city" name="private_city" t-att-value="values.get('private_city')"/>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="private_country_id">Country</label>
+                            <select class="form-select" id="private_country_id" name="private_country_id">
+                                <option value="">-</option>
+                                <option t-foreach="countries" t-as="country" t-att-value="country.id"
+                                        t-att-selected="str(country.id) == values.get('private_country_id')">
+                                    <t t-esc="country.name"/>
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="private_state_id">State</label>
+                            <select class="form-select" id="private_state_id" name="private_state_id">
+                                <option value="">-</option>
+                                <option t-foreach="states" t-as="state" t-att-value="state[0]"
+                                        t-att-selected="str(state[0]) == values.get('private_state_id')">
+                                    <t t-esc="state[1]"/>
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label" for="private_zip">ZIP</label>
+                            <input type="text" class="form-control" id="private_zip" name="private_zip" t-att-value="values.get('private_zip')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="private_phone">Private Phone</label>
+                            <input type="text" class="form-control" id="private_phone" name="private_phone" t-att-value="values.get('private_phone')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="private_email">Private Email</label>
+                            <input type="email" class="form-control" id="private_email" name="private_email" t-att-value="values.get('private_email')"/>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Emergency Contact</h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label" for="emergency_contact">Contact Name</label>
+                            <input type="text" class="form-control" id="emergency_contact" name="emergency_contact" t-att-value="values.get('emergency_contact')"/>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label" for="emergency_phone">Contact Phone</label>
+                            <input type="text" class="form-control" id="emergency_phone" name="emergency_phone" t-att-value="values.get('emergency_phone')"/>
+                        </div>
+                    </div>
+
+                    <h5 class="mt-4">Family Status</h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label" for="marital">Marital Status</label>
+                            <select class="form-select" id="marital" name="marital">
+                                <option t-foreach="marital_options" t-as="opt" t-att-value="opt[0]"
+                                        t-att-selected="opt[0] == values.get('marital')">
+                                    <t t-esc="opt[1]"/>
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 spouse_field">
+                            <label class="form-label" for="spouse_complete_name">Spouse Complete Name</label>
+                            <input type="text" class="form-control" id="spouse_complete_name" name="spouse_complete_name" t-att-value="values.get('spouse_complete_name')"/>
+                        </div>
+                        <div class="col-md-4 spouse_field">
+                            <label class="form-label" for="spouse_birthdate">Spouse Birthdate</label>
+                            <input type="date" class="form-control" id="spouse_birthdate" name="spouse_birthdate" t-att-value="values.get('spouse_birthdate')"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label" for="children">Number of Dependent Children</label>
+                            <input type="number" min="0" step="1" class="form-control" id="children" name="children" t-att-value="values.get('children')"/>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <button type="submit" class="btn btn-primary">Send for Approval</button>
+                        <a href="/my/private_details" class="btn btn-link">Cancel</a>
+                    </div>
+                </form>
+
+                <script type="text/javascript"><![CDATA[
+                    document.addEventListener('DOMContentLoaded', function () {
+                        var country = document.getElementById('private_country_id');
+                        var state = document.getElementById('private_state_id');
+                        var marital = document.getElementById('marital');
+
+                        // Refill the State list when the country changes
+                        country.addEventListener('change', function () {
+                            state.innerHTML = '<option value="">-</option>';
+                            if (!country.value) { return; }
+                            fetch('/my/private_details/states?country_id=' + encodeURIComponent(country.value))
+                                .then(function (r) { return r.json(); })
+                                .then(function (data) {
+                                    data.states.forEach(function (s) {
+                                        var opt = document.createElement('option');
+                                        opt.value = s.id;
+                                        opt.textContent = s.name;
+                                        state.appendChild(opt);
+                                    });
+                                });
+                        });
+
+                        // Spouse details only apply when married / legal cohabitant
+                        function toggleSpouse() {
+                            var show = ['married', 'cohabitant'].indexOf(marital.value) !== -1;
+                            document.querySelectorAll('.spouse_field').forEach(function (el) {
+                                el.classList.toggle('d-none', !show);
+                            });
+                        }
+                        marital.addEventListener('change', toggleSpouse);
+                        toggleSpouse();
+                    });
+                ]]></script>
+            </div>
+        </t>
+    </template>
+
+</odoo>

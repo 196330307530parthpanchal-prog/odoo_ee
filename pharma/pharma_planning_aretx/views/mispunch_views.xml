@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharma_attendance_mispunch_list" model="ir.ui.view">
+        <field name="name">pharma.attendance.mispunch.list</field>
+        <field name="model">pharma.attendance.mispunch</field>
+        <field name="arch" type="xml">
+            <list string="Attendance Mispunches">
+                <field name="name"/>
+                <field name="employee_id"/>
+                <field name="planning_slot_id"/>
+                <field name="punch_datetime"/>
+                <field name="punch_type"/>
+                <field name="reason"/>
+                <field name="state" widget="badge"/>
+                <field name="attendance_id"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharma_attendance_mispunch_form" model="ir.ui.view">
+        <field name="name">pharma.attendance.mispunch.form</field>
+        <field name="model">pharma.attendance.mispunch</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Mispunch">
+                <header>
+                    <field name="state" widget="statusbar" statusbar_visible="detected,resolved"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="employee_id"/>
+                            <field name="planning_slot_id"/>
+                        </group>
+                        <group>
+                            <field name="punch_datetime"/>
+                            <field name="punch_type"/>
+                            <field name="attendance_id"/>
+                        </group>
+                    </group>
+                    <field name="reason" nolabel="1" placeholder="Reason..."/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_pharma_attendance_mispunch" model="ir.actions.act_window">
+        <field name="name">Attendance Mispunches</field>
+        <field name="res_model">pharma.attendance.mispunch</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', '=', 'detected')]</field>
+    </record>
+
+    <menuitem
+        id="menu_pharma_attendance_mispunch"
+        name="Mispunches"
+        parent="hr_attendance.menu_hr_attendance_root"
+        action="action_pharma_attendance_mispunch"
+        sequence="51"
+    />
+
+</odoo>

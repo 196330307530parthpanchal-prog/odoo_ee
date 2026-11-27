@@ -1,0 +1,2 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pharma_attendance_mispunch_user,pharma.attendance.mispunch.user,model_pharma_attendance_mispunch,base.group_user,1,1,1,1

@@ -1,0 +1,309 @@
+<odoo>
+
+    <!-- Time Off Breadcrumb -->
+    <template id="portal_time_off_breadcrumbs" inherit_id="portal.portal_breadcrumbs" name="Time Off Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <!-- ESS parent crumb -->
+            <li t-if="page_name in ['time_off', 'apply_time_off', 'leave_allocations']" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'time_off'" class="breadcrumb-item active">
+                My Time Offs
+            </li>
+            <li t-if="page_name == 'apply_time_off'" class="breadcrumb-item active">
+                Apply Time Off
+            </li>
+            <li t-if="page_name == 'leave_allocations'" class="breadcrumb-item active">
+                My Leave Allocations
+            </li>
+        </xpath>
+    </template>
+
+    <template id="portal_time_off_page" name="Portal Time Offs">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h1 class="mb-0">My Time Offs</h1>
+                    <a href="/my/apply_time_off" class="btn btn-primary">Apply Time Off</a>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h3>Your Leave Records</h3>
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Leave Type</th>
+                                    <th>Start Date</th>
+                                    <th>End Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="time_offs" t-as="time_off">
+                                    <td>
+                                        <t t-esc="time_off.holiday_status_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="time_off.date_from.strftime('%Y-%m-%d')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="time_off.date_to.strftime('%Y-%m-%d')"/>
+                                    </td>
+                                    <td>
+                                        <t t-esc="dict(time_off._fields['state'].selection).get(time_off.state, 'Unknown')"/>
+                                    </td>
+                                </tr>
+                                <tr t-if="not time_offs">
+                                    <td colspan="4" class="text-center">No time offs found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_apply_time_off_form" name="Apply Time Off">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <h1>Apply Time Off</h1>
+                <form action="/my/apply_time_off/submit" method="post" enctype="multipart/form-data" class="mt-4">
+                    <!-- Include CSRF token -->
+                    <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+
+                    <!--                    <div class="form-group">-->
+                    <!--                        <label for="time_off_type">Time Off Type</label>-->
+                    <!--                        <select id="time_off_type" name="time_off_type" class="form-control">-->
+                    <!--                            <option t-foreach="time_off_types" t-as="type" t-att-value="type.id">-->
+                    <!--                                <t t-esc="type.name"/>-->
+                    <!--                                <t t-esc="type['label']"/>-->
+
+                    <!--                            </option>-->
+                    <!--                        </select>-->
+                    <!--                    </div>-->
+                    <div class="form-group">
+                        <label for="time_off_type">Time Off Type</label>
+                        <select id="time_off_type" name="time_off_type" class="form-control">
+                            <option t-foreach="time_off_types" t-as="type" t-att-value="type['id']"
+                                    t-att-data-request-unit="type['request_unit']"
+                                    t-att-data-support-document="'1' if type['support_document'] else None">
+                                <t t-esc="type['label']"/>
+                                <!--                                <t t-esc="'Mohammad Husen: ' + type['label']"/>-->
+                            </option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="date_from" id="date_from_label">From</label>
+                        <input type="date" id="date_from" name="date_from" class="form-control"/>
+                    </div>
+                    <div class="form-group mt-3" id="date_to_group">
+                        <label for="date_to">To</label>
+                        <input type="date" id="date_to" name="date_to" class="form-control"/>
+                    </div>
+                    <!-- Half Day / Custom Hours: shown only for hour based leave types -->
+                    <div class="form-group mt-3 d-none" id="unit_options">
+                        <div class="form-check form-check-inline">
+                            <input type="checkbox" class="form-check-input" id="half_day" name="half_day" value="1"/>
+                            <label class="form-check-label" for="half_day">Half Day</label>
+                        </div>
+                        <div class="form-check form-check-inline d-none" id="custom_hours_wrap">
+                            <input type="checkbox" class="form-check-input" id="custom_hours" name="custom_hours" value="1"/>
+                            <label class="form-check-label" for="custom_hours">Custom Hours</label>
+                        </div>
+                    </div>
+                    <div class="form-group mt-3 d-none" id="half_day_period_wrap">
+                        <label for="half_day_period">Period</label>
+                        <select id="half_day_period" name="half_day_period" class="form-control">
+                            <option value="am">Morning</option>
+                            <option value="pm">Afternoon</option>
+                        </select>
+                    </div>
+                    <div class="row mt-3 d-none" id="hours_wrap">
+                        <div class="col">
+                            <label for="hour_from">From (time)</label>
+                            <input type="time" id="hour_from" name="hour_from" class="form-control" step="900"/>
+                        </div>
+                        <div class="col">
+                            <label for="hour_to">To (time)</label>
+                            <input type="time" id="hour_to" name="hour_to" class="form-control" step="900"/>
+                        </div>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="requested_days">Requested (Days/Hours)</label>
+                        <input type="text" id="requested_days" class="form-control" value="0 days" readonly="readonly"/>
+                    </div>
+                    <div class="form-group mt-3">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control"></textarea>
+                    </div>
+                    <!-- Supporting document: only for leave types that allow it -->
+                    <div class="form-group mt-3 d-none" id="support_document_group">
+                        <label for="supporting_documents">Supporting Document</label>
+                        <input type="file" id="supporting_documents" name="supporting_documents"
+                               class="form-control" multiple="multiple"/>
+                        <!-- Chosen files; hover a file to show its remove (x) button -->
+                        <div id="support_files_list" class="d-flex flex-wrap gap-2 mt-2"></div>
+                    </div>
+                    <style>
+                        .o_support_file .btn-close { visibility: hidden; }
+                        .o_support_file:hover .btn-close { visibility: visible; }
+                        @media (hover: none) { .o_support_file .btn-close { visibility: visible; } }
+                    </style>
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <a href="/my/home" class="btn btn-secondary">Cancel</a>
+                    </div>
+                    <div class="form-group mt-3">
+                    </div>
+                </form>
+                <script type="text/javascript">
+                    (function () {
+                        var typeEl = document.getElementById('time_off_type');
+                        var fromEl = document.getElementById('date_from');
+                        var toEl = document.getElementById('date_to');
+                        var daysEl = document.getElementById('requested_days');
+                        var fromLabel = document.getElementById('date_from_label');
+                        var toGroup = document.getElementById('date_to_group');
+                        var unitOptions = document.getElementById('unit_options');
+                        var customHoursWrap = document.getElementById('custom_hours_wrap');
+                        var halfEl = document.getElementById('half_day');
+                        var hoursEl = document.getElementById('custom_hours');
+                        var periodWrap = document.getElementById('half_day_period_wrap');
+                        var periodEl = document.getElementById('half_day_period');
+                        var hoursWrap = document.getElementById('hours_wrap');
+                        var hourFromEl = document.getElementById('hour_from');
+                        var hourToEl = document.getElementById('hour_to');
+                        var supportGroup = document.getElementById('support_document_group');
+                        var supportEl = document.getElementById('supporting_documents');
+                        var supportList = document.getElementById('support_files_list');
+                        var selectedFiles = [];
+
+                        // Put the kept files back into the file input so they are submitted.
+                        function syncFiles() {
+                            var transfer = new DataTransfer();
+                            selectedFiles.forEach(function (file) { transfer.items.add(file); });
+                            supportEl.files = transfer.files;
+                        }
+
+                        // Show the chosen files, each with a remove (x) button on hover.
+                        function renderFiles() {
+                            supportList.textContent = '';
+                            selectedFiles.forEach(function (file, index) {
+                                var item = document.createElement('div');
+                                item.className = 'o_support_file d-flex align-items-center border rounded px-2 py-1';
+                                var name = document.createElement('span');
+                                name.textContent = file.name;
+                                var remove = document.createElement('button');
+                                remove.type = 'button';
+                                remove.className = 'btn-close ms-2';
+                                remove.title = 'Remove';
+                                remove.setAttribute('aria-label', 'Remove');
+                                remove.addEventListener('click', function () {
+                                    selectedFiles.splice(index, 1);
+                                    syncFiles();
+                                    renderFiles();
+                                });
+                                item.appendChild(name);
+                                item.appendChild(remove);
+                                supportList.appendChild(item);
+                            });
+                        }
+
+                        // Each pick replaces the input's files, so add the new ones to our list.
+                        supportEl.addEventListener('change', function () {
+                            Array.prototype.forEach.call(supportEl.files, function (file) {
+                                var exists = selectedFiles.some(function (kept) {
+                                    return kept.name === file.name &amp;&amp; kept.size === file.size;
+                                });
+                                if (!exists) { selectedFiles.push(file); }
+                            });
+                            syncFiles();
+                            renderFiles();
+                        });
+
+                        // Unit of the selected leave type: day, half_day or hour.
+                        function currentUnit() {
+                            var option = typeEl.options[typeEl.selectedIndex];
+                            return option ? option.getAttribute('data-request-unit') : 'day';
+                        }
+
+                        // Ask the server for Odoo's 'Requested (Days/Hours)' text and show it (read-only).
+                        function updateDuration() {
+                            var empty = currentUnit() === 'hour' ? '0:00 hours' : '0 days';
+                            var single = halfEl.checked || hoursEl.checked;
+                            if (!fromEl.value || (!single &amp;&amp; !toEl.value)) {
+                                daysEl.value = empty;
+                                return;
+                            }
+                            var query = 'time_off_type=' + encodeURIComponent(typeEl.value) +
+                                '&amp;date_from=' + encodeURIComponent(fromEl.value) +
+                                '&amp;date_to=' + encodeURIComponent(toEl.value);
+                            if (halfEl.checked) {
+                                query += '&amp;half_day=1&amp;half_day_period=' + encodeURIComponent(periodEl.value);
+                            }
+                            if (hoursEl.checked) {
+                                query += '&amp;custom_hours=1&amp;hour_from=' + encodeURIComponent(hourFromEl.value) +
+                                    '&amp;hour_to=' + encodeURIComponent(hourToEl.value);
+                            }
+                            fetch('/my/apply_time_off/days?' + query)
+                                .then(function (response) { return response.json(); })
+                                .then(function (data) { daysEl.value = data.display || empty; })
+                                .catch(function () { daysEl.value = empty; });
+                        }
+
+                        // Show or hide Half Day / Custom Hours and their fields like the Odoo form does.
+                        function refreshLayout() {
+                            var unit = currentUnit();
+                            unitOptions.classList.toggle('d-none', unit === 'day');
+                            customHoursWrap.classList.toggle('d-none', unit !== 'hour');
+                            if (unit === 'day') { halfEl.checked = false; }
+                            if (unit !== 'hour') { hoursEl.checked = false; }
+                            var single = halfEl.checked || hoursEl.checked;
+                            periodWrap.classList.toggle('d-none', !halfEl.checked);
+                            hoursWrap.classList.toggle('d-none', !hoursEl.checked);
+                            toGroup.classList.toggle('d-none', single);
+                            fromLabel.textContent = single ? 'Date' : 'From';
+                            // Supporting Document is offered only for types that allow it.
+                            var option = typeEl.options[typeEl.selectedIndex];
+                            var allowsDocument = option &amp;&amp; option.getAttribute('data-support-document') === '1';
+                            supportGroup.classList.toggle('d-none', !allowsDocument);
+                            if (!allowsDocument) {
+                                selectedFiles = [];
+                                syncFiles();
+                                renderFiles();
+                            }
+                            updateDuration();
+                        }
+
+                        // Half Day and Custom Hours exclude each other.
+                        halfEl.addEventListener('change', function () {
+                            if (halfEl.checked) { hoursEl.checked = false; }
+                            refreshLayout();
+                        });
+                        hoursEl.addEventListener('change', function () {
+                            if (hoursEl.checked) { halfEl.checked = false; }
+                            refreshLayout();
+                        });
+                        typeEl.addEventListener('change', refreshLayout);
+                        [fromEl, toEl, periodEl, hourFromEl, hourToEl].forEach(function (el) {
+                            el.addEventListener('change', updateDuration);
+                        });
+                        refreshLayout();
+                    })();
+                </script>
+            </div>
+        </t>
+    </template>
+
+    <template id="portal_my_allocations" name="Portal My Allocations">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <h2 class="mb-4">My Leave Allocations</h2>
+            </div>
+        </t>
+    </template>
+
+
+</odoo>

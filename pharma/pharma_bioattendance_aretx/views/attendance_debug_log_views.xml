@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_pharma_attendance_debug_log_list" model="ir.ui.view">
+        <field name="name">pharma.attendance.debug.log.list</field>
+        <field name="model">pharma.attendance.debug.log</field>
+        <field name="arch" type="xml">
+            <list string="Attendance Debug Logs" default_order="create_date desc">
+                <field name="create_date"/>
+                <field name="employee_id"/>
+                <field name="attendance_date"/>
+                <field name="first_in"/>
+                <field name="last_out"/>
+                <field name="worked_minutes"/>
+                <field name="worked_hours"/>
+                <field name="has_pair"/>
+                <field name="status"/>
+                <field name="shift_name"/>
+                <field name="required_minutes"/>
+                <field name="pair_limit"/>
+                <field name="is_multi"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_pharma_attendance_debug_log_form" model="ir.ui.view">
+        <field name="name">pharma.attendance.debug.log.form</field>
+        <field name="model">pharma.attendance.debug.log</field>
+        <field name="arch" type="xml">
+            <form string="Attendance Debug Log">
+                <sheet>
+                    <group>
+                        <group string="Attendance">
+                            <field name="create_date"/>
+                            <field name="employee_id"/>
+                            <field name="attendance_date"/>
+                            <field name="first_in"/>
+                            <field name="last_out"/>
+                            <field name="worked_minutes"/>
+                            <field name="worked_hours"/>
+                            <field name="has_pair"/>
+                        </group>
+                        <group string="Calculation">
+                            <field name="status"/>
+                            <field name="status_kind"/>
+                            <field name="shift_name"/>
+                            <field name="required_minutes"/>
+                            <field name="pair_limit"/>
+                            <field name="is_multi"/>
+                            <field name="report_from"/>
+                            <field name="report_to"/>
+                        </group>
+                    </group>
+                    <separator string="Punches"/>
+                    <field name="punch_data" nolabel="1"/>
+                    <separator string="Shift Detail"/>
+                    <field name="shift_detail" nolabel="1"/>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_pharma_attendance_debug_log_search" model="ir.ui.view">
+        <field name="name">pharma.attendance.debug.log.search</field>
+        <field name="model">pharma.attendance.debug.log</field>
+        <field name="arch" type="xml">
+            <search string="Attendance Debug Logs">
+                <field name="employee_id"/>
+                <field name="attendance_date"/>
+                <field name="status"/>
+                <field name="shift_name"/>
+                <filter string="Has Pair" name="has_pair" domain="[('has_pair','=',True)]"/>
+                <filter string="Multiple" name="multiple" domain="[('is_multi','=',True)]"/>
+                <filter string="Today" name="today" domain="[('attendance_date','=',context_today())]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Employee" name="group_employee" context="{'group_by':'employee_id'}"/>
+                    <filter string="Date" name="group_date" context="{'group_by':'attendance_date'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_pharma_attendance_debug_log" model="ir.actions.act_window">
+        <field name="name">Attendance Debug Logs</field>
+        <field name="res_model">pharma.attendance.debug.log</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_pharma_attendance_debug_log_search"/>
+        <field name="help" type="html">
+            <p>These temporary logs show the values calculated by the Attendance Engine before the Excel report is rendered.</p>
+        </field>
+    </record>
+
+    <menuitem id="menu_pharma_attendance_debug_log"
+              name="Attendance Debug Logs"
+              parent="menu_pharma_biometric_attendance_root"
+              action="action_pharma_attendance_debug_log"
+              sequence="40"/>
+
+</odoo>

@@ -1,0 +1,114 @@
+<odoo>
+
+    <record id="view_private_request_list" model="ir.ui.view">
+        <field name="name">hr.employee.private.request.list</field>
+        <field name="model">hr.employee.private.request</field>
+        <field name="arch" type="xml">
+            <list string="Private Details Requests" decoration-warning="state == 'pending'"
+                  decoration-success="state == 'approved'" decoration-danger="state == 'rejected'">
+                <field name="requested_on"/>
+                <field name="employee_id"/>
+                <field name="company_id" groups="base.group_multi_company" optional="hide"/>
+                <field name="decided_by" optional="show"/>
+                <field name="decided_on" optional="show"/>
+                <field name="state" widget="badge"
+                       decoration-warning="state == 'pending'" decoration-success="state == 'approved'"
+                       decoration-danger="state == 'rejected'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="view_private_request_form" model="ir.ui.view">
+        <field name="name">hr.employee.private.request.form</field>
+        <field name="model">hr.employee.private.request</field>
+        <field name="arch" type="xml">
+            <form string="Private Details Request" create="0">
+                <header>
+                    <button name="action_approve" type="object" string="Approve" class="btn-primary"
+                            invisible="state != 'pending'" groups="hr.group_hr_user"
+                            confirm="The requested values will be written to the employee record. Continue?"/>
+                    <button name="action_reject" type="object" string="Reject"
+                            invisible="state != 'pending'" groups="hr.group_hr_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,approved"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="employee_id"/>
+                            <field name="company_id" groups="base.group_multi_company"/>
+                            <field name="requested_on"/>
+                        </group>
+                        <group>
+                            <field name="decided_by"/>
+                            <field name="decided_on"/>
+                            <field name="reject_reason" readonly="state != 'pending'"
+                                   placeholder="Required to reject; shown to the employee"/>
+                        </group>
+                    </group>
+                    <separator string="Requested Changes"/>
+                    <field name="change_summary" nolabel="1"/>
+                    <notebook>
+                        <page string="All Requested Values" name="values">
+                            <group>
+                                <group string="Private Contact">
+                                    <field name="private_street" readonly="1"/>
+                                    <field name="private_street2" readonly="1"/>
+                                    <field name="private_city" readonly="1"/>
+                                    <field name="private_state_id" readonly="1"/>
+                                    <field name="private_zip" readonly="1"/>
+                                    <field name="private_country_id" readonly="1"/>
+                                    <field name="private_phone" readonly="1"/>
+                                    <field name="private_email" readonly="1"/>
+                                </group>
+                                <group string="Emergency Contact">
+                                    <field name="emergency_contact" readonly="1"/>
+                                    <field name="emergency_phone" readonly="1"/>
+                                </group>
+                                <group string="Family Status">
+                                    <field name="marital" readonly="1"/>
+                                    <field name="spouse_complete_name" readonly="1"/>
+                                    <field name="spouse_birthdate" readonly="1"/>
+                                    <field name="children" readonly="1"/>
+                                </group>
+                            </group>
+                            <div class="text-muted">Only the fields listed under "Requested Changes" are applied on approval.</div>
+                        </page>
+                    </notebook>
+                </sheet>
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_private_request_search" model="ir.ui.view">
+        <field name="name">hr.employee.private.request.search</field>
+        <field name="model">hr.employee.private.request</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="employee_id"/>
+                <filter name="pending" string="Pending Approval" domain="[('state', '=', 'pending')]"/>
+                <filter name="approved" string="Approved" domain="[('state', '=', 'approved')]"/>
+                <filter name="rejected" string="Rejected" domain="[('state', '=', 'rejected')]"/>
+                <group>
+                    <filter name="group_state" string="Status" context="{'group_by': 'state'}"/>
+                    <filter name="group_employee" string="Employee" context="{'group_by': 'employee_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_private_request" model="ir.actions.act_window">
+        <field name="name">Private Details Requests</field>
+        <field name="res_model">hr.employee.private.request</field>
+        <field name="view_mode">list,form</field>
+        <field name="context">{'search_default_pending': 1}</field>
+    </record>
+
+    <menuitem id="menu_private_request" name="Private Details Requests"
+              parent="hr.menu_hr_root" action="action_private_request"
+              sequence="25" groups="hr.group_hr_user"/>
+
+</odoo>

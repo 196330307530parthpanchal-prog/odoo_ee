@@ -1,0 +1,142 @@
+<odoo>
+
+    <!-- Breadcrumbs: Home / Employee Self Service / My Leave Allocations / Request -->
+    <template id="portal_allocation_request_breadcrumbs" inherit_id="portal.portal_breadcrumbs"
+              name="Allocation Request Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name == 'allocation_request'" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'allocation_request'" class="breadcrumb-item">
+                <a href="/my/allocations">My Leave Allocations</a>
+            </li>
+            <li t-if="page_name == 'allocation_request'" class="breadcrumb-item active">
+                Request a Leave Allocation
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Add the request button (top right) and success message to My Leave Allocations -->
+    <template id="portal_my_allocations_request_button" inherit_id="pharma_portal_timeoff_aretx.portal_my_allocations"
+              name="My Allocations Request Button">
+        <xpath expr="//h2[hasclass('mb-4')]" position="replace">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="mb-0">My Leave Allocations</h2>
+                <a href="/my/allocations/request" class="btn btn-primary">Request a Leave Allocation</a>
+            </div>
+            <div t-if="allocation_pending" class="alert alert-success" role="alert">
+                You have a leave allocation request waiting for approval.
+            </div>
+        </xpath>
+        <!-- Allocation request history with coloured status -->
+        <xpath expr="//div[hasclass('container')]" position="inside">
+            <h4 class="mb-3">My Allocation Requests</h4>
+            <div class="table-responsive mb-4">
+                <table class="table table-striped align-middle">
+                    <thead>
+                        <tr>
+                            <th>Requested On</th>
+                            <th>Time Off Type</th>
+                            <th class="text-end">Duration</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr t-foreach="allocation_requests" t-as="alloc_request">
+                            <td><span t-field="alloc_request.create_date" t-options="{'widget': 'date'}"/></td>
+                            <td><span t-field="alloc_request.holiday_status_id"/></td>
+                            <td class="text-end"><span t-field="alloc_request.duration_display"/></td>
+                            <td><span t-field="alloc_request.notes"/></td>
+                            <td>
+                                <span t-if="alloc_request.state == 'confirm'" class="badge text-bg-warning">To Approve</span>
+                                <span t-elif="alloc_request.state == 'validate1'" class="badge text-bg-info">Second Approval</span>
+                                <span t-elif="alloc_request.state == 'validate'" class="badge text-bg-success">Approved</span>
+                                <span t-elif="alloc_request.state == 'refuse'" class="badge text-bg-danger">Refused</span>
+                            </td>
+                        </tr>
+                        <tr t-if="not allocation_requests">
+                            <td colspan="5" class="text-center text-muted">You have not requested any leave allocation yet.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Request form -->
+    <template id="portal_allocation_request_form" name="Request a Leave Allocation">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <h1>Request a Leave Allocation</h1>
+                <div t-if="error" class="alert alert-danger mt-3" role="alert">
+                    <t t-esc="error"/>
+                </div>
+                <form action="/my/allocations/request/submit" method="post" class="mt-4">
+                    <input type="hidden" name="csrf_token" t-att-value="csrf_token"/>
+
+                    <div class="form-group">
+                        <label for="holiday_status_id">Time Off Type</label>
+                        <select id="holiday_status_id" name="holiday_status_id" class="form-control" required="required">
+                            <option value="">Select a time off type</option>
+                            <option t-foreach="leave_type_options" t-as="option" t-att-value="option['id']"
+                                    t-att-data-request-unit="option['request_unit']"
+                                    t-att-data-overtime="option['overtime']"
+                                    t-att-selected="str(option['id']) == values.get('holiday_status_id')">
+                                <t t-esc="option['label']"/>
+                            </option>
+                        </select>
+                    </div>
+
+                    <!-- Allocation: days or hours depending on the selected type -->
+                    <div class="form-group mt-3">
+                        <label for="duration" id="duration_label">Number of Days Requested</label>
+                        <div class="input-group">
+                            <input type="number" id="duration" name="duration" class="form-control"
+                                   min="0.01" step="any" required="required"
+                                   t-att-value="values.get('duration')"/>
+                            <span class="input-group-text" id="duration_unit">Days</span>
+                        </div>
+                        <div id="overtime_info" class="text-success mt-1 d-none">
+                            <strong id="overtime_value"></strong> Extra Hours Available
+                        </div>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="reason">Reason</label>
+                        <textarea id="reason" name="reason" class="form-control" rows="4" required="required"><t t-esc="values.get('reason')"/></textarea>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <button type="submit" class="btn btn-success">Submit</button>
+                        <a href="/my/allocations" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+                <script type="text/javascript">
+                    (function () {
+                        var typeEl = document.getElementById('holiday_status_id');
+                        var labelEl = document.getElementById('duration_label');
+                        var unitEl = document.getElementById('duration_unit');
+                        var overtimeEl = document.getElementById('overtime_info');
+                        var overtimeValueEl = document.getElementById('overtime_value');
+
+                        // Switch between days and hours and show extra hours available, like Odoo.
+                        function refresh() {
+                            var option = typeEl.options[typeEl.selectedIndex];
+                            var isHours = option &amp;&amp; option.getAttribute('data-request-unit') === 'hour';
+                            var overtime = option ? option.getAttribute('data-overtime') : '';
+                            labelEl.textContent = isHours ? 'Number of Hours Requested' : 'Number of Days Requested';
+                            unitEl.textContent = isHours ? 'Hours' : 'Days';
+                            overtimeValueEl.textContent = overtime || '';
+                            overtimeEl.classList.toggle('d-none', !overtime);
+                        }
+
+                        typeEl.addEventListener('change', refresh);
+                        refresh();
+                    })();
+                </script>
+            </div>
+        </t>
+    </template>
+
+</odoo>

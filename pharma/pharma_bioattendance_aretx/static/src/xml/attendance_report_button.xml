@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<templates xml:space="preserve">
+
+    <t t-inherit="web.ListView" t-inherit-mode="extension">
+
+        <!--
+            Place Generate Excel after the Management breadcrumb
+            and before the Search Bar.
+        -->
+        <xpath expr="//t[@t-set-slot='control-panel-additional-actions']" position="inside">
+
+            <button t-if="props.resModel === 'hr.attendance' and canGenerateAttendanceExcel" type="button" class="btn btn-primary o_pharma_generate_excel" t-on-click="onGenerateAttendanceExcel">
+
+                Generate Excel
+
+            </button>
+
+        </xpath>
+
+    </t>
+
+</templates>

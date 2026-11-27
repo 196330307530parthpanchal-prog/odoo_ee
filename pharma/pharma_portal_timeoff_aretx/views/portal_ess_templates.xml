@@ -1,0 +1,92 @@
+<odoo>
+
+    <!-- Single "Employee Self Service" card on the portal home -->
+    <template id="portal_ess_home_card" name="ESS Home Card" inherit_id="portal.portal_my_home">
+        <xpath expr="//div[@class='o_portal_category row g-2 mt-3' and @id='portal_common_category']" position="inside">
+            <t t-call="portal.portal_docs_entry" t-if="request.env.user.has_group('pharma_portal_timeoff_aretx.group_portal_employee')">
+                <t t-set="icon" t-value="'/pharma_portal_timeoff_aretx/static/src/img/ess.svg'"/>
+                <t t-set="title">Employee Self Service</t>
+                <t t-set="url" t-value="'/my/ess'"/>
+                <t t-set="text">Time off, attendance, public holidays and private details</t>
+                <t t-set="config_card" t-value="True"/>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- ESS breadcrumb -->
+    <template id="portal_ess_breadcrumbs" inherit_id="portal.portal_breadcrumbs" name="ESS Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name == 'ess'" class="breadcrumb-item active">
+                Employee Self Service
+            </li>
+        </xpath>
+    </template>
+
+    <!-- ESS dashboard: three Time Off options + Attendance -->
+    <template id="portal_ess_dashboard_template" name="Employee Self Service Dashboard">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-4">
+                <h2 class="mb-4">Employee Self Service</h2>
+                <div class="row g-3">
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/my/time_off" class="text-decoration-none">
+                            <div class="card shadow-sm p-3 text-center h-100">
+                                <img src="/pharma_portal_timeoff_aretx/static/src/img/my-timeoff.svg"
+                                     style="height:50px;" class="mb-2"/>
+                                <h5>My Time Offs</h5>
+                                <p class="text-muted">View and manage your time offs</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/my/allocations" class="text-decoration-none">
+                            <div class="card shadow-sm p-3 text-center h-100">
+                                <img src="/pharma_portal_timeoff_aretx/static/src/img/allocations.svg"
+                                     style="height:50px;" class="mb-2"/>
+                                <h5>My Leave Allocations</h5>
+                                <p class="text-muted">View your leave allocations</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/my/attendance" class="text-decoration-none">
+                            <div class="card shadow-sm p-3 text-center h-100">
+                                <img src="/pharma_portal_timeoff_aretx/static/src/img/attendance.svg"
+                                     style="height:50px;" class="mb-2"/>
+                                <h5>Your Attendance</h5>
+                                <p class="text-muted">View your attendance records</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/my/public_holidays" class="text-decoration-none">
+                            <div class="card shadow-sm p-3 text-center h-100">
+                                <img src="/pharma_portal_timeoff_aretx/static/src/img/public-holidays.svg"
+                                     style="height:50px;" class="mb-2"/>
+                                <h5>Public Holidays</h5>
+                                <p class="text-muted">View the list of public holidays</p>
+                            </div>
+                        </a>
+                    </div>
+
+                    <div class="col-md-6 col-lg-4">
+                        <a href="/my/private_details" class="text-decoration-none">
+                            <div class="card shadow-sm p-3 text-center h-100">
+                                <img src="/pharma_portal_timeoff_aretx/static/src/img/private-details.svg"
+                                     style="height:50px;" class="mb-2"/>
+                                <h5>View Private Details</h5>
+                                <p class="text-muted">View your private details and request updates</p>
+                            </div>
+                        </a>
+                    </div>
+
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

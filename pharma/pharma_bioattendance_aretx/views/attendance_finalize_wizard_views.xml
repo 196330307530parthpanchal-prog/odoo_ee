@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_pharma_attendance_finalize_wizard_form" model="ir.ui.view">
+        <field name="name">pharma.attendance.finalize.wizard.form</field>
+        <field name="model">pharma.attendance.finalize.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirm Attendance Finalization">
+                <header>
+                    <button name="action_back" string="Back" type="object" class="btn-secondary" icon="fa-arrow-left" />
+                </header>
+                <sheet>
+                    <field name="operation" invisible="1"/>
+                    <field name="attendance_sheet_id" invisible="1"/>
+
+                    <div class="alert alert-warning" role="alert" invisible="operation != 'finalize'">
+
+                        <strong>Confirm Attendance Finalization</strong>
+
+                        <p class="mt-2">
+                            Are you sure you want to finalize attendance
+                            for the following period?
+                        </p>
+
+                        <p>
+                            Once finalized, leave registration for dates
+                            within this attendance period will be blocked.
+                        </p>
+                    </div>
+                    <div class="alert alert-warning" role="alert" invisible="operation != 'redo'">
+                        <strong>Confirm Redo Finalization</strong>
+                        <p class="mt-2">
+                            Are you sure you want to reopen this
+                            finalized attendance period?
+                        </p>
+                        <p>
+                            After reopening, leave registration for dates
+                            in this period will be allowed again,
+                            subject to the normal leave rules.
+                        </p>
+                    </div>
+                    <group>
+                        <field name="date_from"/>
+                        <field name="date_to"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="action_confirm" string="Confirm" type="object" class="btn-primary"/>
+
+                    <button string="Cancel" special="cancel" class="btn-secondary"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+</odoo>

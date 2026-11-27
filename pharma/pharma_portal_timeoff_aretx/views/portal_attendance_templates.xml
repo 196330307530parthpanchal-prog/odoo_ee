@@ -1,0 +1,97 @@
+<odoo>
+
+    <!-- Attendance breadcrumbs (Home / Employee Self Service / Your Attendance) -->
+    <template id="portal_attendance_breadcrumbs" inherit_id="portal.portal_breadcrumbs" name="Attendance Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name == 'my_attendance'" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'my_attendance'" class="breadcrumb-item active">
+                Your Attendance
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Logged-in user's attendance records with a month/year filter -->
+    <template id="portal_my_attendance_template" name="Your Attendance">
+        <t t-call="portal.portal_layout">
+            <t t-set="breadcrumbs_searchbar" t-value="True"/>
+            <t t-call="portal.portal_searchbar">
+                <t t-set="title">Your Attendance</t>
+                <!-- Year filter -->
+                <div class="ms-lg-2">
+                    <span class="small me-1 navbar-text">Year:</span>
+                    <div class="btn-group">
+                        <button id="portal_searchbar_year" data-bs-toggle="dropdown" class="btn btn-light dropdown-toggle">
+                            <t t-esc="year_label"/>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="portal_searchbar_year">
+                            <t t-foreach="searchbar_years" t-as="option">
+                                <a t-att-href="'/my/attendance?' + keep_query('*', year=option[0])"
+                                   t-attf-class="dropdown-item#{year == option[0] and ' active' or ''}">
+                                    <span t-esc="option[1]"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+                <!-- Month filter -->
+                <div class="ms-lg-2">
+                    <span class="small me-1 navbar-text">Month:</span>
+                    <div class="btn-group">
+                        <button id="portal_searchbar_month" data-bs-toggle="dropdown" class="btn btn-light dropdown-toggle">
+                            <t t-esc="month_label"/>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="portal_searchbar_month">
+                            <t t-foreach="searchbar_months" t-as="option">
+                                <a t-att-href="'/my/attendance?' + keep_query('*', month=option[0])"
+                                   t-attf-class="dropdown-item#{month == option[0] and ' active' or ''}">
+                                    <span t-esc="option[1]"/>
+                                </a>
+                            </t>
+                        </div>
+                    </div>
+                </div>
+            </t>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th class="text-end">Worked Hours</th>
+                        <th class="text-end">Today's Overtime Hours</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr t-foreach="attendances" t-as="attendance">
+                        <td>
+                            <span t-field="attendance.check_in" t-options="{'widget': 'datetime'}"/>
+                        </td>
+                        <td>
+                            <span t-if="attendance.check_out" t-field="attendance.check_out"
+                                  t-options="{'widget': 'datetime'}"/>
+                            <span t-else="" class="text-muted">-</span>
+                        </td>
+                        <td class="text-end">
+                            <span t-if="attendance.check_out" t-field="attendance.worked_hours"
+                                  t-options="{'widget': 'float_time'}"/>
+                            <span t-else="" class="text-muted">-</span>
+                        </td>
+                        <td class="text-end">
+                            <span t-if="attendance.check_out" t-field="attendance.overtime_hours"
+                                  t-options="{'widget': 'float_time'}"/>
+                            <span t-else="" class="text-muted">-</span>
+                        </td>
+                    </tr>
+                    <tr t-if="not attendances">
+                        <td colspan="4" class="text-center">No attendance records found.</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div t-if="pager" class="o_portal_pager d-flex justify-content-center my-3">
+                <t t-call="portal.pager"/>
+            </div>
+        </t>
+    </template>
+
+</odoo>

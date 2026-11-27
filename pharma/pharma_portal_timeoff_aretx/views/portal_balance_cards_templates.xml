@@ -1,0 +1,30 @@
+<odoo>
+
+    <!-- Allocated days and remaining balance boxes on My Time Offs -->
+    <template id="portal_time_off_balance_cards" inherit_id="pharma_portal_timeoff_aretx.portal_time_off_page"
+              name="Time Off Balance Cards">
+        <xpath expr="//div[hasclass('d-flex')]" position="after">
+            <div class="row mt-4">
+                <t t-foreach="allocations" t-as="allocation">
+                    <div class="col-md-4 mb-4">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <t t-esc="allocation['leave_name']"/>
+                                </h5>
+                                <p class="card-text">
+                                    <strong>Allocated Days:</strong>
+                                    <t t-esc="allocation['total_leave']"/>
+                                    <br/>
+                                    <strong>Remaining Balance:</strong>
+                                    <t t-esc="allocation['remain_leave']"/>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </xpath>
+    </template>
+
+</odoo>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="email_template_mispunch_notification" model="mail.template">
+        <field name="name">Mispunch Notification</field>
+
+        <field name="model_id"
+               ref="pharma_bioattendance_aretx.model_pharma_biometric_mispunch"/>
+
+        <field name="subject">Attendance Mispunch Notification</field>
+
+        <field name="email_from">{{ user.email_formatted }}</field>
+        <field name="email_to">{{ object.employee_id.work_email }}</field>
+
+        <field name="body_html" type="html">
+            <div>
+                <p>
+                    Dear <t t-out="object.employee_id.name"/>,
+                </p>
+
+                <p>
+                    You have a miss punch for the
+                    <strong>
+                        <t t-out="format_date(object.punch_datetime.date())"/>
+                    </strong>.
+                </p>
+
+                <p>
+                    Please regularise your attendance with the concerned person.
+                </p>
+
+                <p>
+                    Regards,<br/>
+                    Team HR
+                </p>
+            </div>
+        </field>
+
+    </record>
+
+</odoo>

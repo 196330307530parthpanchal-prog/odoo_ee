@@ -1,0 +1,111 @@
+<odoo>
+
+    <!-- "My Planned Activities" card on the ESS dashboard, right after "View Private Details" -->
+    <template id="portal_ess_planned_activities_card"
+              inherit_id="pharma_portal_timeoff_aretx.portal_ess_dashboard_template"
+              name="ESS Planned Activities Card">
+        <xpath expr="//a[@href='/my/private_details']/parent::div" position="after">
+            <div class="col-md-6 col-lg-4">
+                <a href="/my/planned_activities" class="text-decoration-none">
+                    <div class="card shadow-sm p-3 text-center h-100">
+                        <img src="/pharma_portal_timeoff_aretx/static/src/img/planned-activities.svg"
+                             style="height:50px;" class="mb-2"/>
+                        <h5>My Planned Activities</h5>
+                        <p class="text-muted">View your planned activities</p>
+                    </div>
+                </a>
+            </div>
+        </xpath>
+    </template>
+
+    <!-- Breadcrumbs: Home / Employee Self Service / My Planned Activities -->
+    <template id="portal_planned_activities_breadcrumbs" inherit_id="portal.portal_breadcrumbs"
+              name="Planned Activities Breadcrumbs">
+        <xpath expr="//ol" position="inside">
+            <li t-if="page_name == 'planned_activities'" class="breadcrumb-item">
+                <a href="/my/ess">Employee Self Service</a>
+            </li>
+            <li t-if="page_name == 'planned_activities'" class="breadcrumb-item active">
+                My Planned Activities
+            </li>
+        </xpath>
+    </template>
+
+    <!-- Read-only list of planned activities -->
+    <template id="portal_planned_activities_template" name="My Planned Activities">
+        <t t-call="portal.portal_layout">
+            <div class="container mt-3">
+                <div class="card shadow-sm">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">My Planned Activities</h4>
+                        <span class="badge text-bg-primary">
+                            <t t-esc="len(activities)"/>
+                            <t t-esc="'Activity' if len(activities) == 1 else 'Activities'"/>
+                        </span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li t-foreach="activities" t-as="activity"
+                            class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-3">
+                            <div class="d-flex align-items-center">
+                                <i t-attf-class="fa #{activity.activity_type_id.icon or 'fa-tasks'} fa-lg text-muted me-3"/>
+                                <div>
+                                    <div class="fw-bold">
+                                        <t t-esc="activity.summary or activity.activity_type_id.name"/>
+                                    </div>
+                                    <div class="small text-muted">
+                                        Assigned to: <t t-esc="activity.user_id.name"/>
+                                    </div>
+                                    <div class="small text-muted">
+                                        Due: <t t-esc="activity.date_deadline.strftime('%d %b %Y')"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex flex-column flex-sm-row align-items-end align-items-sm-center gap-2 ms-2">
+                                <span t-if="activity.state == 'overdue'" class="badge text-bg-danger">Overdue</span>
+                                <span t-else="" class="badge text-bg-warning">Pending</span>
+                                <form t-attf-action="/my/planned_activities/#{activity.id}/done" method="post" class="m-0">
+                                    <input type="hidden" name="csrf_token" t-att-value="request.csrf_token()"/>
+                                    <button type="submit" class="btn btn-sm btn-success text-nowrap">
+                                        <i class="fa fa-check me-1"/>Mark as Done
+                                    </button>
+                                </form>
+                            </div>
+                        </li>
+                        <li t-if="not activities" class="list-group-item text-center text-muted py-4">
+                            You have no planned activities.
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- History: completed activities -->
+                <div class="card shadow-sm mt-4 mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">Activity History</h4>
+                        <span class="badge text-bg-secondary"><t t-esc="len(history)"/> Done</span>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li t-foreach="history" t-as="done_activity"
+                            class="list-group-item d-flex justify-content-between align-items-center flex-wrap py-3">
+                            <div class="d-flex align-items-center">
+                                <i class="fa fa-check-circle fa-lg text-success me-3"/>
+                                <div>
+                                    <div class="fw-bold">
+                                        <t t-esc="done_activity['name']"/>
+                                    </div>
+                                    <div class="small text-muted">
+                                        Date: <t t-esc="done_activity['date'].strftime('%d %b %Y')"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="badge text-bg-success ms-2"><i class="fa fa-check me-1"/>Done</span>
+                        </li>
+                        <li t-if="not history" class="list-group-item text-center text-muted py-4">
+                            No completed activities yet.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </t>
+    </template>
+
+</odoo>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="email_template_absent_reminder" model="mail.template">
+
+        <field name="name">Absent Reminder Notification</field>
+
+        <field name="model_id"
+               ref="hr.model_hr_employee"/>
+
+        <field name="subject">Attendance Leave Reminder</field>
+        <field name="email_from">{{ object.company_id.email }}</field>
+        <field name="email_to">{{ object.work_email }}</field>
+        <field name="auto_delete" eval="False"/>
+
+        <field name="body_html" type="html">
+            <div>
+                <p>
+                    Dear <t t-out="object.name"/>,
+                </p>
+
+                <p>
+                    You have an Absentsim on
+                    <strong>
+                        <t t-out="ctx.get('absent_date')"/>
+                    </strong>.
+                    Please register your leave for that day.
+                </p>
+
+                <p>
+                    Regards,<br/>
+                    Team HR
+                </p>
+            </div>
+        </field>
+
+    </record>
+
+</odoo>

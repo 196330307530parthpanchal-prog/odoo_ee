@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="hr_contract_view_form_pharma_payroll_fields" model="ir.ui.view">
+        <field name="name">hr.contract.form.pharma.payroll.fields</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='information']" position="inside">
+                    <group>
+                        <group string="Earnings / Salary Components">
+                            <field name="pa_in_basic_salary"/>
+                            <field name="pa_in_conveyance_allowance"/>
+                            <field name="pa_in_education_allowance"/>
+                            <field name="pa_in_washing_allowance"/>
+                            <field name="pa_in_interim_bonus"/>
+                            <field name="pa_in_other_special_allowance"/>
+                            <field name="pa_in_fuel_allowance"/>
+                            <field name="pa_in_professional_attire"/>
+                            <field name="pa_in_official_client_meetings"/>
+                            <field name="pa_in_pb_security"/>
+                            <field name="pa_in_performance_bonus"/>
+                            <field name="pa_in_arrear_amount"/>
+                            <field name="pa_in_additional_earnings"/>
+                        </group>
+                        <group string="Salary Calculation">
+                            <field name="pa_in_sub_gross_salary"/>
+                            <field name="pa_in_total_gross_salary"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Employer Liabilities / Company Contributions">
+                            <field name="pa_in_employer_pf"/>
+                            <field name="pa_in_employer_esic"/>
+                            <field name="pa_in_employer_lwf"/>
+                            <field name="pa_in_employer_leave_encashment"/>
+                            <field name="pa_in_extra_curricular_charges"/>
+                            <field name="pa_in_employer_nps"/>
+                            <field name="pa_in_employer_gratuity"/>
+                            <field name="pa_in_employer_mediclaim"/>
+                            <field name="pa_in_employer_pf_rate"/>
+                            <field name="pa_in_employer_esic_rate"/>
+                            <field name="pa_in_employer_pf_basis"/>
+                        </group>
+                        <group string="CTC Calculation">
+                            <field name="pa_in_total_employer_liability"/>
+                            <field name="pa_in_total_ctc"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group string="Additional Employee Deductions">
+                            <field name="pa_in_employee_lwf"/>
+                            <field name="pa_in_bonus_recovery"/>
+                            <field name="pa_in_lta_recovery"/>
+                            <field name="pa_in_advance_salary"/>
+                            <field name="pa_in_other_deduction"/>
+                            <field name="pa_in_professional_tax"/>
+                            <field name="pa_in_nps_deduction"/>
+                            <field name="pa_in_pb_security_recovery"/>
+                        </group>
+                        <group string="Final Salary Calculation">
+                            <field name="pa_in_total_employee_deductions"/>
+                            <field name="pa_in_net_salary"/>
+                        </group>
+                    </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
