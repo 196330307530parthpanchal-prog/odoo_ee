@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="res_config_settings_view_form_delivery_sign" model="ir.ui.view">
+        <field name="name">res.config.settings.view.form.inherit.delivery.sign</field>
+        <field name="model">res.config.settings</field>
+        <field name="inherit_id" ref="account.res_config_settings_view_form"/>
+        <field name="arch" type="xml">
+            <!-- Directly below "Default Terms & Conditions" in the Customer Invoices block -->
+            <xpath expr="//setting[@id='use_invoice_terms']" position="after">
+                <setting id="delivery_sign" company_dependent="1"
+                         help="Add a signature area at the bottom of the delivery slip">
+                    <field name="delivery_sign_enabled"/>
+                    <div class="content-group" invisible="not delivery_sign_enabled">
+                        <div class="mt16">
+                            <field name="delivery_sign_html"
+                                   class="oe-bordered-editor w-100"
+                                   options="{'style-inline': true, 'codeview': true}"/>
+                        </div>
+                    </div>
+                </setting>
+            </xpath>
+        </field>
+    </record>
+</odoo>
